@@ -5,6 +5,8 @@ require __DIR__ . '/../vendor/autoload.php';
 use Slim\Factory\AppFactory;
 use DI\Container;
 
+$users = ['mike', 'mishel', 'adel', 'keks', 'kamila'];
+
 $container = new Container();
 $container->set('renderer', function () {
     // Параметром передается базовая директория, в которой будут храниться шаблоны
@@ -19,5 +21,10 @@ $app->get('/users/{id}', function ($request, $response, $args) {
     // $this доступен внутри анонимной функции благодаря https://php.net/manual/ru/closure.bindto.php
     // $this в Slim это контейнер зависимостей
     return $this->get('renderer')->render($response, 'users/show.phtml', $params);
+});
+$app->get('/users/', function ($request, $response, $args) use ($users) {
+    $term = $request->getQueryParam('term');
+    $params = ['users' => $users, 'term' => $term];
+    return $this->get('renderer')->render($response, 'users/index.phtml', $params);
 });
 $app->run();
